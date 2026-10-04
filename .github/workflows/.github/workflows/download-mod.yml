@@ -1,0 +1,37 @@
+name: Build and Download Neo Voxy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build client 1.20.1
+        run: ./gradlew client-1.20.1
+
+      - name: Find built JAR
+        run: |
+          echo "Looking for built JAR files..."
+          find . -type f -name "*.jar" -print
+
+      - name: Upload Neo Voxy JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: neo-voxy-1.20.1-forge-client
+          path: |
+            **/neo-voxy-0.3.5-alpha.2-mc1.20.1-forge-client.jar
+          if-no-files-found: error
